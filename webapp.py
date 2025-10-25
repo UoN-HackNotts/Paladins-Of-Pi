@@ -5,24 +5,22 @@ import ollama  # ensure this is imported if needed elsewhere
 
 # website name
 st.set_page_config(
-    page_title="Sass SaaS Platform",
+    page_title="Paladins of Pi",
     page_icon="📊",
     layout="centered",
     initial_sidebar_state="expanded"
 )
 
-# title, header, stuff
+# title
 st.title("Paladins of Pi")
-# st.subheader("prompt!")
-st.write("welcome to the Paladins of Pi.")
 
-# text input for backend prompt
+# text subheaders above input box
 st.subheader("Prompt Input")
 st.write("**Using:**")
 
 prompt_input = st.text_area(
     "Enter your prompt for the backend:",
-    placeholder="Type your prompt here... This will be sent to your backend script",
+    placeholder="Type your prompt here...",
     height=150,
     key="prompt_input",
     help="This prompt will be sent to your custom backend script"
@@ -42,7 +40,7 @@ if st.button("Send to Ollama"):
                 ], 
                 capture_output=True,
                 text=True,
-                timeout=90  # 90 second timeout
+                timeout=30  # ?? second timeout
                 )
                 
                 if result.returncode == 0:
@@ -54,7 +52,7 @@ if st.button("Send to Ollama"):
                     st.text_area("Error details:", value=result.stderr, height=200)
                     
             except subprocess.TimeoutExpired:
-                st.error("Request timed out after 90 seconds")
+                st.error("Request timed out after 10 seconds")
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
     else:
