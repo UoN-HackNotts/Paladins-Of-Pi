@@ -1,7 +1,8 @@
 import requests
 
+## GET REQUEST
 # user input source
-OLLAMA_URL = "http://localhost:11434/api/generate"
+FRONTEND_URL = "http://localhost:11434/api/generate"
 
 params = {"q": "python", # q=query, carries the search term/main text the client is asking the server about
           "page": 2} # pagination: tells server which page of results are desired
@@ -11,7 +12,7 @@ params = {"q": "python", # q=query, carries the search term/main text the client
 # https://api.example.com/search?q=python&page=2
 
 
-resp = requests.get(OLLAMA_URL, params=params)
+resp = requests.get(FRONTEND_URL, params=params)
 
 # check for errors, specifically the HTTP status code
 # if between 200-299, method does nothing
@@ -19,6 +20,12 @@ resp = requests.get(OLLAMA_URL, params=params)
 # why?: prevents the program from silently continuing when something goes wrong
 resp.raise_for_status()
 
-data = resp.json()
+user_text = resp.text
 
-print(data)
+## POST JSON REQUEST
+obj = {"Original text:", user_text, "processed from client"} # actual text being returned back to the url
+
+post_resp = requests.post(FRONTEND_URL, json=obj)
+post_resp.raise_for_status() # check for errors
+
+print("POST response:", post_resp.text)
