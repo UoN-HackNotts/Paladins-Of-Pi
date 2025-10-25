@@ -38,27 +38,7 @@ if st.button("Send to Dungeon Master"):
                         data = response.json()
                         st.text_area("Response:", value=data["ai_text"], height=200)
                     else:
-                        st.error(f"Error: {response.status_code}")
-                # run the ollama_chat.py script as a subprocess
-                # using command line arguments only (remove the input parameter)
-                result = subprocess.run([
-                    sys.executable,  # Use the same Python interpreter
-                    "ollama_chat.py",
-                    prompt_input
-                ], 
-                capture_output=True,
-                text=True,
-                timeout=30  # ?? second timeout
-                )
-                
-                if result.returncode == 0:
-                    st.success("Request completed!")
-                    st.subheader("Response from Ollama:")
-                    st.text_area("Response:", value=result.stdout, height=200)
-                else:
-                    st.error(f"Script failed with return code {result.returncode}")
-                    st.text_area("Error details:", value=result.stderr, height=200)
-                    
+                        st.error(f"Error: {response.status_code}")    
             except subprocess.TimeoutExpired:
                 st.error("Request timed out after 30 seconds")
             except Exception as e:
