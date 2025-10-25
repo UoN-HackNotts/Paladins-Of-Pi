@@ -1,10 +1,13 @@
 import json
-def story(input, stat):
+def story(user_input, stat):
+    """
+    Logs text inputs into a dictionary in json
+    """
 
     if(stat):
-        entry={"user": input}
+        entry={"user": user_input}
     else:
-        entry={"ai": input}
+        entry={"ai": user_input}
     try:
         with open("data.json", "r") as file:
             data = json.load(file)
