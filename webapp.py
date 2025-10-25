@@ -1,6 +1,7 @@
 import streamlit as st
 import subprocess
 import sys
+import requests
 
 
 # website name
@@ -31,6 +32,13 @@ if st.button("Send to Dungeon Master"):
     if prompt_input.strip():
         with st.spinner("Processing your prompt..."):
             try:
+                with st.spinner("Processing your Request..."):
+                    response = requests.get("http://localhost:8501/generate", params={"q": prompt_input})
+                    if response.status_code == 200:
+                        data = response.json()
+                        st.text_area("Response:", value=data["ai_text"], height=200)
+                    else:
+                        st.error(f"Error: {response.status_code}")
                 # run the ollama_chat.py script as a subprocess
                 # using command line arguments only (remove the input parameter)
                 result = subprocess.run([
@@ -58,7 +66,7 @@ if st.button("Send to Dungeon Master"):
     else:
         st.warning("Please enter a prompt first!")
 
-# # colours, backgrounds
+# # colours, backgrounds - probably wont use
 # background_colour = "959595" # background colour
 # st.markdown(f"""
 # <style>
