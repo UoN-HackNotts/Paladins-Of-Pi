@@ -1,9 +1,8 @@
 import streamlit as st
-
 import subprocess
 import sys
 
-# Set the website name properly
+# website name
 st.set_page_config(
     page_title="Sass SaaS Platform",
     page_icon="📊",
@@ -11,14 +10,14 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Main content
-st.title("Sass SaaS Platform")
+# title, header, stuff
+st.title("Paladins of Pi")
 st.subheader("prompt!")
-st.write("Welcome to our Sass SaaS application!")
+st.write("welcome to the Paladins of Pi.")
 
 # Text input for backend prompt
 st.subheader("Backend Prompt Input")
-st.write("**Using:** Custom Backend Script")
+st.write("**Using:** ollama")
 
 prompt_input = st.text_area(
     "Enter your prompt for the backend:",
@@ -34,11 +33,12 @@ if st.button("Send to Ollama"):
         with st.spinner("Processing your prompt..."):
             try:
                 # Run the ollama_chat.py script as a subprocess
+                # Using command line arguments only (remove the input parameter)
                 result = subprocess.run([
                     sys.executable,  # Use the same Python interpreter
-                    "ollama_chat.py"
+                    "ollama_chat.py",
+                    prompt_input
                 ], 
-                input=prompt_input.encode(),  # Pass input to the script
                 capture_output=True,
                 text=True,
                 timeout=30  # 30 second timeout
@@ -47,9 +47,10 @@ if st.button("Send to Ollama"):
                 if result.returncode == 0:
                     st.success("Request completed!")
                     st.subheader("Response from Ollama:")
-                    st.code(result.stdout, language="text")
+                    st.text_area("Response:", value=result.stdout, height=200)
                 else:
-                    st.error(f"Script failed: {result.stderr}")
+                    st.error(f"Script failed with return code {result.returncode}")
+                    st.text_area("Error details:", value=result.stderr, height=100)
                     
             except subprocess.TimeoutExpired:
                 st.error("Request timed out after 30 seconds")
@@ -58,15 +59,12 @@ if st.button("Send to Ollama"):
     else:
         st.warning("Please enter a prompt first!")
 
-
 # colours, backgrounds
-
 background_colour = "959595" # background colour
-
 st.markdown(f"""
 <style>
     .stApp {{
-        background-color: {background_colour};
+        background-color: #{background_colour};
     }}
 </style>
 """, unsafe_allow_html=True)
