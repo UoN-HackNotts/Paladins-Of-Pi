@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 ## GET REQUEST (FROM WEBSITE)
 # user input source
-FRONTEND_URL = "http://localhost:8000/generate" # might be 8501
+FRONTEND_URL = "http://localhost:8501/generate" # might be 8501
 LLM_URL = "http://localhost:11434/api/generate" # ollama
 
 @app.route("/generate", methods=["GET"])
