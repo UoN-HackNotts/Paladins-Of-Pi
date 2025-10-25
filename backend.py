@@ -5,17 +5,11 @@ from Story import story
 app = Flask(__name__)
 
 ## GET REQUEST (FROM WEBSITE)
-# user input source
-FRONTEND_URL = "http://localhost:8501/generate" # might be 8501
 LLM_URL = "http://localhost:11434/api/generate" # ollama
 LLM_TIMEOUT = 40
 
 @app.route("/generate", methods=["GET"])
 def generate(): # handler for HTTP GET/generate
-
-    # for visualisation:
-    # https://api.example.com/search?q=python&page=2
-
     """
     Takes in the input from the website using flask request (NOT requests)
     """
@@ -32,6 +26,7 @@ def generate(): # handler for HTTP GET/generate
     llm_json = llm_resp.json() # gets raw json file of llm's output
 
     ai_text = llm_json.get("response") or llm_json.get("generated") or llm_json.get("text") or "" # tries combinations to extracting json from inpt
+    story(ai_text)
 
     return jsonify({
         "input": user_text,
