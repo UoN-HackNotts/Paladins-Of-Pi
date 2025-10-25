@@ -1,7 +1,7 @@
 import streamlit as st
 import subprocess
 import sys
-import ollama  # ensure this is imported if needed elsewhere
+
 
 # website name
 st.set_page_config(
@@ -27,7 +27,7 @@ prompt_input = st.text_area(
 )
 
 # button to send to ollama
-if st.button("Send to Ollama"):
+if st.button("Send to Dungeon Master"):
     if prompt_input.strip():
         with st.spinner("Processing your prompt..."):
             try:
@@ -52,7 +52,7 @@ if st.button("Send to Ollama"):
                     st.text_area("Error details:", value=result.stderr, height=200)
                     
             except subprocess.TimeoutExpired:
-                st.error("Request timed out after 10 seconds")
+                st.error("Request timed out after 30 seconds")
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
     else:
