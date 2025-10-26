@@ -14,14 +14,11 @@ Paladins of Pi is a lightweight full-stack app that uses a local Ollama LLM to g
 - Designed for Raspberry Pi 5 (8 GB) desktop usage
 
 ## Repo layout (important files)
-- `ollama_chat.py` (or `backend.py`) — Flask backend exposing `/generate`
-- `webapp.py` (Streamlit frontend) — main UI, conversation history and controls
+- `backend.py` — Flask backend exposing `/generate`
+- `frontend.py` (Streamlit frontend) — main UI, conversation history and controls
 - `Story.py` — local story-processing helpers called by the backend
 - `data.json` — persisted conversation history (flat [{user:..},{ai:..}] format)
 - `run_paladins.sh` (or `run_paladins` script) — startup helper for Ollama, backend and frontend
-- `requirements.txt` — (if present) Python deps for virtual environment
-
-> Note: some files in the repo may use different filenames (e.g. `backend.py` vs `ollama_chat.py`, `frontend.py` vs `webapp.py`). Adjust settings consistently.
 
 ---
 
