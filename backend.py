@@ -1,4 +1,4 @@
-import requests
+import requests as rq
 from flask import Flask, request, jsonify
 from Story import story
 
@@ -39,7 +39,7 @@ def generate(): # handler for HTTP GET/generate
     if initial_prompt: # disable flag after first use
         initial_prompt = False
 
-    llm_resp = requests.post(LLM_URL, json=payload, timeout=LLM_TIMEOUT)
+    llm_resp = rq.post(LLM_URL, json=payload, timeout=LLM_TIMEOUT)
     llm_resp.raise_for_status()
     llm_json = llm_resp.json() # gets raw json file of llm's output
 
