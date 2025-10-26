@@ -33,7 +33,7 @@ def generate(): # handler for HTTP GET/generate
     LLM output
     """
     payload = {"model": "phi3",
-               "prompt": SYSTEM_PROMPT.format(user_input=TEMPLATE.format(user_input=user_text)) if initial_prompt else TEMPLATE.format(user_input=user_text),
+               "prompt": SYSTEM_PROMPT.format(user_input=user_text) if initial_prompt else TEMPLATE.format(user_input=user_text),
                "stream": False} # sends the text as a prompt (TEMPORARY)
 
     if initial_prompt: # disable flag after first use
