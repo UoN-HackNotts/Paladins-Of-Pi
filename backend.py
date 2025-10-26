@@ -60,7 +60,7 @@ def generate(): # handler for HTTP GET/generate
     return jsonify({
         "input": user_text,
         "ai_text": ai_text,
-        "full_ai_text": full_ai_text
+        "full_ai_text": full_ai_text,
     }), 200 # flag for "okay"
 
 if __name__ == "__main__":
