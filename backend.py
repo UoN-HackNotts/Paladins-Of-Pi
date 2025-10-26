@@ -5,12 +5,11 @@ from Story import story
 app = Flask(__name__)
 
 SYSTEM_PROMPT = """You're a medieval text adventure engine.
-Write short vivid scenes under 50 words using the user input:
-{user_input}
+Write short vivid scenes under 50 words using the user input: {user_input}
 British English spelling
 """
 
-TEMPLATE = """In <50 words respond to '{user_input}'"""
+TEMPLATE = """In <50 words respond medievally (don't break character) to '{user_input}'"""
 
 ## GET REQUEST (FROM WEBSITE)
 LLM_URL = "http://localhost:11434/api/generate" # ollama
