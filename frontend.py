@@ -30,7 +30,7 @@ st.subheader("Prompt Input")
 st.write("**Using:**")
 
 prompt_input = st.text_area(
-    "Enter your prompt for the backend:",
+    "Enter prompt:",
     placeholder="Type your prompt here...",
     height=150,
     key="prompt_input",
