@@ -14,7 +14,7 @@ TEMPLATE = """In <50 words respond to '{user_input}'"""
 
 ## GET REQUEST (FROM WEBSITE)
 LLM_URL = "http://localhost:11434/api/generate" # ollama
-LLM_TIMEOUT = 40
+LLM_TIMEOUT = 60
 
 initial_prompt = True
 
