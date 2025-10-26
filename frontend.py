@@ -5,6 +5,14 @@ import requests
 import json
 import os
 
+# Initialize session state for confirmation dialog and expanded states
+if 'show_clear_confirmation' not in st.session_state:
+    st.session_state.show_clear_confirmation = False
+
+# Initialize session state for expanded conversations
+if 'expanded_conversations' not in st.session_state:
+    st.session_state.expanded_conversations = {}
+
 # initialise conversation history session state
 if 'conversations' not in st.session_state:
     st.session_state.conversations = []
@@ -13,6 +21,16 @@ if 'current_conversation' not in st.session_state:
 
 # JSON file path
 JSON_FILE = "data.json"
+
+def truncate_text(text, max_length=20):
+    """Truncate text to max_length characters and add ... if longer"""
+    if len(text) > max_length:
+        return text[:max_length] + "..."
+    return text
+
+def toggle_expand(conv_index):
+    """Toggle the expanded state for a conversation"""
+    st.session_state.expanded_conversations[conv_index] = not st.session_state.expanded_conversations.get(conv_index, False)
 
 def load_conversations():
     """Load conversations from JSON file"""
@@ -73,6 +91,7 @@ def clear_all_conversations():
     """Clear all conversations from session state and JSON file"""
     st.session_state.conversations = []
     st.session_state.current_conversation = None
+    st.session_state.expanded_conversations = {}
     try:
         with open(JSON_FILE, 'w') as f:
             json.dump([], f)
@@ -88,7 +107,7 @@ st.set_page_config(
     page_title="Paladins of Pi",
     page_icon="📊",
     layout="centered",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"  # Collapse sidebar since we're not using it
 )
 
 BACKGROUND_COLOUR = "#040417"  # background colour
@@ -98,70 +117,53 @@ st.markdown(f"""
     .stApp {{
         background-color: {BACKGROUND_COLOUR};
     }}
-    .sidebar .sidebar-content {{
-        background-color: #0f0f23;
-    }}
-    .conversation-item {{
-        padding: 8px 12px;
-        margin: 4px 0;
-        border-radius: 6px;
-        cursor: pointer;
+    .chat-history {{
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
         background-color: #1a1a2e;
-        color: white;
-        border-left: 3px solid #4CC9F0;
     }}
-    .conversation-item:hover {{
+    .user-message {{
         background-color: #2a2a3e;
+        padding: 10px;
+        border-radius: 8px;
+        margin: 5px 0;
+        border-left: 3px solid #4CC9F0;
+        cursor: pointer;
+        transition: background-color 0.3s;
     }}
-    .conversation-item.active {{
-        background-color: #4CC9F0;
-        color: black;
+    .user-message:hover {{
+        background-color: #3a3a4e;
+    }}
+    .ai-message {{
+        background-color: #1e1e2e;
+        padding: 10px;
+        border-radius: 8px;
+        margin: 5px 0;
+        border-left: 3px solid #F72585;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }}
+    .ai-message:hover {{
+        background-color: #2e2e3e;
+    }}
+    .warning-box {{
+        background-color: #2a1a1a;
+        border: 1px solid #ff6b6b;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 10px 0;
+    }}
+    .expand-icon {{
+        float: right;
+        font-weight: bold;
+        color: #4CC9F0;
     }}
 </style>
 """, unsafe_allow_html=True)
 
-# sidebar - conversation History
-st.sidebar.title("Paladins of Pi")
-st.sidebar.markdown("---")
-
-# new conversation button
-if st.sidebar.button("+ New Chat", use_container_width=True):
-    st.session_state.current_conversation = None
-    st.rerun()
-
-st.sidebar.markdown("### Previous Conversations")
-
-# display conversation history
-for i, conv in enumerate(st.session_state.conversations):
-    # display conversation preview (first few words of user message)
-    preview = conv['user_message'][:30] + "..." if len(conv['user_message']) > 30 else conv['user_message']
-    
-    # style based on whether this is the current conversation
-    is_active = st.session_state.current_conversation == i
-    item_class = "conversation-item active" if is_active else "conversation-item"
-    
-    col1, col2 = st.sidebar.columns([3, 1])
-    with col1:
-        st.markdown(f'<div class="{item_class}">{preview}</div>', 
-                   unsafe_allow_html=True)
-    
-    # add click functionality using buttons
-    if st.sidebar.button("Load", key=f"load_{i}", use_container_width=True):
-        st.session_state.current_conversation = i
-        st.rerun()
-
-st.sidebar.markdown("---")
-
 # main content area
 st.title("Paladins of Pi")
-
-# display current conversation if one is selected
-if st.session_state.current_conversation is not None:
-    current_conv = st.session_state.conversations[st.session_state.current_conversation]
-    st.subheader("Current Conversation")
-    st.write(f"**You:** {current_conv['user_message']}")
-    st.write(f"**AI:** {current_conv['ai_response']}")
-    st.markdown("---")
 
 # text subheaders above input box
 st.subheader("Prompt Input")
@@ -189,9 +191,9 @@ if st.button("Send to Dungeon Master"):
                         add_conversation(prompt_input, ai_response)
                         
                         # Display response
-                        st.text_area("Response:", value=ai_response, height=200)
+                        st.text_area("Response:", value=ai_response, height=200, key="response_area")
                         
-                        # Refresh to update sidebar
+                        # Refresh to update chat history
                         st.rerun()
                     else:
                         st.error(f"Error: {response.status_code}")    
@@ -202,7 +204,82 @@ if st.button("Send to Dungeon Master"):
     else:
         st.warning("Please enter a prompt first!")
 
-# clear history button
-if st.sidebar.button("Clear History", use_container_width=True):
-    clear_all_conversations()
-    st.rerun()
+# Display chat history below the response area
+if st.session_state.conversations:
+    st.markdown("---")
+    st.subheader("Chat History")
+    
+    # Clear history button
+    col1, col2 = st.columns([3, 1])
+    with col2:
+        if st.button("Clear History", use_container_width=True):
+            st.session_state.show_clear_confirmation = True
+    
+    # Show confirmation dialog if triggered
+    if st.session_state.show_clear_confirmation:
+        st.markdown('<div class="warning-box">', unsafe_allow_html=True)
+        st.warning("⚠️ Are you sure you want to clear all chat history? This action cannot be undone.")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.button("Yes, Clear All", type="primary", use_container_width=True):
+                clear_all_conversations()
+                st.session_state.show_clear_confirmation = False
+                st.success("Chat history cleared!")
+                st.rerun()
+        
+        with col2:
+            if st.button("Cancel", use_container_width=True):
+                st.session_state.show_clear_confirmation = False
+                st.rerun()
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Display all conversations in reverse order (newest first)
+    st.markdown('<div class="chat-history">', unsafe_allow_html=True)
+    
+    for i, conv in enumerate(reversed(st.session_state.conversations)):
+        # Calculate the original index (since we're displaying in reverse)
+        original_index = len(st.session_state.conversations) - 1 - i
+        
+        # Check if this conversation is expanded
+        is_expanded = st.session_state.expanded_conversations.get(original_index, False)
+        
+        # Display user message with expand/collapse functionality
+        user_display_text = conv["user_message"] if is_expanded else truncate_text(conv["user_message"])
+        expand_icon = "▼" if is_expanded else "▶"
+        
+        col1, col2 = st.columns([4, 1])
+        with col1:
+            if st.button(f"**You:** {user_display_text}", 
+                        key=f"user_{original_index}",
+                        use_container_width=True,
+                        help="Click to expand/collapse"):
+                toggle_expand(original_index)
+                st.rerun()
+        
+        with col2:
+            st.markdown(f'<div class="expand-icon">{expand_icon}</div>', unsafe_allow_html=True)
+        
+        # Display AI message with expand/collapse functionality
+        if conv["ai_response"]:
+            ai_display_text = conv["ai_response"] if is_expanded else truncate_text(conv["ai_response"])
+            
+            col1, col2 = st.columns([4, 1])
+            with col1:
+                if st.button(f"**AI:** {ai_display_text}", 
+                            key=f"ai_{original_index}",
+                            use_container_width=True,
+                            help="Click to expand/collapse"):
+                    toggle_expand(original_index)
+                    st.rerun()
+            
+            with col2:
+                st.markdown(f'<div class="expand-icon">{expand_icon}</div>', unsafe_allow_html=True)
+        
+        # Add separator between conversations (except for the last one)
+        if i < len(st.session_state.conversations) - 1:
+            st.markdown("---")
+    
+    st.markdown('</div>', unsafe_allow_html=True)

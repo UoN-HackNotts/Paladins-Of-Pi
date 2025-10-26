@@ -1,12 +1,26 @@
-[ 
+[
+    {
+        "user": "hi"
+    },
+
+    {
+        "ai": "hello once more, young one!"
+    },
+
     {
         "user": "hello vro"
     },
+
     {
         "ai": "hello"
     },
+
     {
         "user": "die"
+    },
+
+    {
+        "ai": "i am sorry you feel that way"
     }
 ]
 
