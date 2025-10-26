@@ -7,6 +7,12 @@ app = Flask(__name__)
 ## GET REQUEST (FROM WEBSITE)
 LLM_URL = "http://localhost:11434/api/generate" # ollama
 LLM_TIMEOUT = 40
+SYSTEM_PROMPT = """You are a medieval text adventure engine.
+Write short vivid scenes under 100 words when responding to player inputs, such as: {user_input}
+Use British English spelling only.
+"""
+
+initial_prompt = True
 
 @app.route("/generate", methods=["GET"])
 def generate(): # handler for HTTP GET/generate
@@ -20,7 +26,11 @@ def generate(): # handler for HTTP GET/generate
     """
     LLM output
     """
-    payload = {"model": "phi3", "prompt": user_text, "stream": False} # sends the text as a prompt (TEMPORARY)
+    payload = {"model": "phi3", "prompt": SYSTEM_PROMPT.format(user_input=user_text) if initial_prompt else user_text, "stream": False} # sends the text as a prompt (TEMPORARY)
+
+    if initial_prompt: # disable flag after first use
+        initial_prompt = False
+
     llm_resp = requests.post(LLM_URL, json=payload, timeout=LLM_TIMEOUT)
     llm_resp.raise_for_status()
     llm_json = llm_resp.json() # gets raw json file of llm's output
