@@ -46,6 +46,7 @@ if st.button("Send to Dungeon Master"):
     else:
         st.warning("Please enter a prompt first!")
 
+# option for selection boxes
 
 option = st.selectbox(
     "Select a previous prompt:",
@@ -54,6 +55,8 @@ option = st.selectbox(
     index = None,
     placeholder = "Select Contact method",
 )
+
+st.write("You selected:", option)
 
 
 # # colours, backgrounds - probably wont use
