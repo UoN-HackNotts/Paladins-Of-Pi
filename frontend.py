@@ -171,6 +171,57 @@ st.markdown(f"""
         width: 100%;
         text-align: center;
     }}
+    
+    /* Style ALL buttons with cream background and black text */
+    .stButton > button {{
+        background-color: #FFFDD0 !important;
+        color: #000000 !important;
+        border: 1px solid #FFFDD0 !important;
+    }}
+    .stButton > button:hover {{
+        background-color: #F5F5DC !important;
+        color: #000000 !important;
+        border: 1px solid #F5F5DC !important;
+    }}
+    
+    /* Style text input areas */
+    .stTextArea > div > div > textarea {{
+        background-color: #FFFDD0 !important;
+        color: #000000 !important;
+    }}
+    
+    /* Style the response text area */
+    .stTextArea > div > div > textarea[value] {{
+        background-color: #1a1a2e !important;
+        color: #FFFFFF !important;
+    }}
+    
+    /* Style confirmation buttons - keep red for destructive actions */
+    div[data-testid="stButton"] > button[kind="primary"] {{
+        background-color: #FF6B6B !important;
+        color: #FFFFFF !important;
+        border: 1px solid #FF6B6B !important;
+    }}
+    
+    /* Ensure text in ALL buttons is black and visible */
+    .stButton > button div p {{
+        color: #000000 !important;
+        font-weight: bold;
+    }}
+    
+    /* Specific styling for conversation history buttons */
+    .chat-history .stButton > button {{
+        background-color: #FFFDD0 !important;
+        color: #000000 !important;
+        border: 1px solid #FFFDD0 !important;
+        width: 100%;
+    }}
+    
+    /* Style the clear history button specifically */
+    .stButton > button:contains("Clear History") {{
+        background-color: #FFFDD0 !important;
+        color: #000000 !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
