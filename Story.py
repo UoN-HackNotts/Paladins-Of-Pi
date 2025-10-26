@@ -4,10 +4,7 @@ def story(user_input, stat):
     Logs text inputs into a dictionary in json
     """
 
-    if(stat):
-        entry={"user": user_input}
-    else:
-        entry={"ai": user_input}
+    entry={"user" if stat else "ai": user_input}
     try:
         with open("data.json", "r") as file:
             data = json.load(file)
