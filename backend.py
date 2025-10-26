@@ -5,7 +5,7 @@ from Story import story
 app = Flask(__name__)
 
 SYSTEM_PROMPT = """You're a medieval text adventure engine.
-Write short vivid scenes under 100 words using the user input:
+Write short vivid scenes under 50 words using the user input:
 {user_input}
 British English spelling
 """
@@ -33,7 +33,7 @@ def generate(): # handler for HTTP GET/generate
     LLM output
     """
     payload = {"model": "phi3",
-               "prompt": SYSTEM_PROMPT.format(user_input=TEMPLATE+user_text) if initial_prompt else TEMPLATE+user_text,
+               "prompt": SYSTEM_PROMPT.format(user_input=TEMPLATE.format(user_text)) if initial_prompt else TEMPLATE.format(user_text),
                "stream": False} # sends the text as a prompt (TEMPORARY)
 
     if initial_prompt: # disable flag after first use
