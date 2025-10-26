@@ -17,6 +17,7 @@ if 'current_conversation' not in st.session_state:
 
 # JSON file path
 JSON_FILE = "data.json"
+PROJECT_TITLE = "Paladins of Pi"
 
 def load_conversations():
     """Load conversations from JSON file"""
@@ -89,7 +90,7 @@ if not st.session_state.conversations:
 
 # website name
 st.set_page_config(
-    page_title="Paladins of Pi",
+    page_title=PROJECT_TITLE,
     page_icon="📊",
     layout="centered",
     initial_sidebar_state="expanded"
@@ -132,7 +133,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # sidebar - conversation History
-st.sidebar.title("Paladins of Pi")
+st.sidebar.title(PROJECT_TITLE)
 st.sidebar.markdown("---")
 
 # new conversation button
@@ -189,7 +190,7 @@ if st.session_state.show_clear_confirmation:
     st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 # main content area
-st.title("Paladins of Pi")
+st.title(PROJECT_TITLE)
 
 # display current conversation if one is selected
 if st.session_state.current_conversation is not None:
