@@ -17,6 +17,12 @@ LLM_TIMEOUT = 60
 
 initial_prompt = True
 
+def last_n_nonempty_lines(text, n):
+    if not text:
+        return ""
+    lines = [ln.rstrip() for ln in text.splitlines() if ln.strip()]
+    return "\n".join(lines[-n:])
+
 @app.route("/generate", methods=["GET"])
 def generate(): # handler for HTTP GET/generate
     """
@@ -42,7 +48,10 @@ def generate(): # handler for HTTP GET/generate
     llm_resp.raise_for_status()
     llm_json = llm_resp.json() # gets raw json file of llm's output
 
-    ai_text = llm_json.get("response") or llm_json.get("generated") or llm_json.get("text") or "" # tries combinations to extracting json from inpt
+    full_ai_text = llm_json.get("response") or llm_json.get("generated") or llm_json.get("text") or "" # tries combinations to extracting json from inpt
+
+    ai_text = last_n_nonempty_lines(full_ai_text, 3)
+
     try:
         story(ai_text, False) # quarantining this code
     except Exception as e:
@@ -51,8 +60,7 @@ def generate(): # handler for HTTP GET/generate
     return jsonify({
         "input": user_text,
         "ai_text": ai_text,
-        
-
+        "full_ai_text": full_ai_text
     }), 200 # flag for "okay"
 
 if __name__ == "__main__":
