@@ -12,6 +12,16 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+BACKGROUND_COLOUR = "#06061f"  # Soft blue
+
+st.markdown(f"""
+<style>
+    .stApp {{
+        background-color: {BACKGROUND_COLOUR};
+    }}
+</style>
+""", unsafe_allow_html=True)
+
 # title
 st.title("Paladins of Pi")
 
@@ -46,17 +56,22 @@ if st.button("Send to Dungeon Master"):
     else:
         st.warning("Please enter a prompt first!")
 
+# sidebar
+
+st.sidebar.title("Paladins of Pi")
+
+
 # option for selection boxes
 
-option = st.selectbox(
-    "Select a previous prompt:",
-    ("Prompt 1", "Prompt 2", "Prompt 3"),
-    help="Select a prompt from your history",
-    index = None,
-    placeholder = "Select Contact method",
-)
+# option = st.selectbox(
+#     "Select a previous prompt:",
+#     ("Prompt 1", "Prompt 2", "Prompt 3"),
+#     help="Select a prompt from your history",
+#     index = None,
+#     placeholder = "Select Contact method",
+# )
 
-st.write("You selected:", option)
+# st.write("You selected:", option)
 
 
 # # colours, backgrounds - probably wont use
