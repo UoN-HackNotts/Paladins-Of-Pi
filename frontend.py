@@ -131,6 +131,7 @@ st.markdown(f"""
         border-left: 3px solid #4CC9F0;
         cursor: pointer;
         transition: background-color 0.3s;
+        text-align: center;
     }}
     .user-message:hover {{
         background-color: #3a3a4e;
@@ -143,6 +144,7 @@ st.markdown(f"""
         border-left: 3px solid #F72585;
         cursor: pointer;
         transition: background-color 0.3s;
+        text-align: center;
     }}
     .ai-message:hover {{
         background-color: #2e2e3e;
@@ -159,14 +161,22 @@ st.markdown(f"""
         font-weight: bold;
         color: #4CC9F0;
     }}
+    .conversation-container {{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }}
+    .message-content {{
+        width: 100%;
+        text-align: center;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
 # main content area
 st.title("Paladins of Pi")
 
-# text subheaders above input box
-st.subheader("Prompt Input")
 
 prompt_input = st.text_area(
     "Ask thou question:",
@@ -209,11 +219,9 @@ if st.session_state.conversations:
     st.markdown("---")
     st.subheader("Chat History")
     
-    # Clear history button
-    col1, col2 = st.columns([3, 1])
-    with col2:
-        if st.button("Clear History", use_container_width=True):
-            st.session_state.show_clear_confirmation = True
+    # Clear history button - placed directly underneath the header
+    if st.button("Clear History", use_container_width=True):
+        st.session_state.show_clear_confirmation = True
     
     # Show confirmation dialog if triggered
     if st.session_state.show_clear_confirmation:
@@ -246,28 +254,22 @@ if st.session_state.conversations:
         # Check if this conversation is expanded
         is_expanded = st.session_state.expanded_conversations.get(original_index, False)
         
-        # Display user message with expand/collapse functionality
-        user_display_text = conv["user_message"] if is_expanded else truncate_text(conv["user_message"])
-        expand_icon = "▼" if is_expanded else "▶"
-        
-        col1, col2 = st.columns([4, 1])
-        with col1:
+        # Use a container to center the content
+        with st.container():
+            # Display user message with expand/collapse functionality
+            user_display_text = conv["user_message"] if is_expanded else truncate_text(conv["user_message"])
+            
             if st.button(f"**You:** {user_display_text}", 
                         key=f"user_{original_index}",
                         use_container_width=True,
                         help="Click to expand/collapse"):
                 toggle_expand(original_index)
                 st.rerun()
-        
-        with col2:
-            st.markdown(f'<div class="expand-icon">{expand_icon}</div>', unsafe_allow_html=True)
-        
-        # Display AI message with expand/collapse functionality
-        if conv["ai_response"]:
-            ai_display_text = conv["ai_response"] if is_expanded else truncate_text(conv["ai_response"])
             
-            col1, col2 = st.columns([4, 1])
-            with col1:
+            # Display AI message with expand/collapse functionality
+            if conv["ai_response"]:
+                ai_display_text = conv["ai_response"] if is_expanded else truncate_text(conv["ai_response"])
+                
                 if st.button(f"**AI:** {ai_display_text}", 
                             key=f"ai_{original_index}",
                             use_container_width=True,
@@ -275,11 +277,8 @@ if st.session_state.conversations:
                     toggle_expand(original_index)
                     st.rerun()
             
-            with col2:
-                st.markdown(f'<div class="expand-icon">{expand_icon}</div>', unsafe_allow_html=True)
-        
-        # Add separator between conversations (except for the last one)
-        if i < len(st.session_state.conversations) - 1:
-            st.markdown("---")
+            # Add separator between conversations (except for the last one)
+            if i < len(st.session_state.conversations) - 1:
+                st.markdown("---")
     
     st.markdown('</div>', unsafe_allow_html=True)
