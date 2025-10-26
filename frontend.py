@@ -5,21 +5,14 @@ import requests
 import json
 import os
 
-# constants
-JSON_FILE = "data.json" # file path
-BACKGROUND_COLOUR = "#040417"  # background colour #040417 is dark blueish
-BACKEND_URL = "http://localhost:8501/generate"
-PROJECT_TITLE = "Paladins of Pi"
-
-# initialise session state for confirmation dialog
-if 'show_clear_confirmation' not in st.session_state:
-    st.session_state.show_clear_confirmation = False
-
 # initialise conversation history session state
 if 'conversations' not in st.session_state:
     st.session_state.conversations = []
 if 'current_conversation' not in st.session_state:
     st.session_state.current_conversation = None
+
+# JSON file path
+JSON_FILE = "data.json"
 
 def load_conversations():
     """Load conversations from JSON file"""
@@ -92,11 +85,13 @@ if not st.session_state.conversations:
 
 # website name
 st.set_page_config(
-    page_title=PROJECT_TITLE,
+    page_title="Paladins of Pi",
     page_icon="📊",
     layout="centered",
     initial_sidebar_state="expanded"
 )
+
+BACKGROUND_COLOUR = "#040417"  # background colour
 
 st.markdown(f"""
 <style>
@@ -122,18 +117,11 @@ st.markdown(f"""
         background-color: #4CC9F0;
         color: black;
     }}
-    .warning-box {{
-        background-color: #2a1a1a;
-        border: 1px solid #ff6b6b;
-        border-radius: 5px;
-        padding: 15px;
-        margin: 10px 0;
-    }}
 </style>
 """, unsafe_allow_html=True)
 
 # sidebar - conversation History
-st.sidebar.title(PROJECT_TITLE)
+st.sidebar.title("Paladins of Pi")
 st.sidebar.markdown("---")
 
 # new conversation button
@@ -164,33 +152,8 @@ for i, conv in enumerate(st.session_state.conversations):
 
 st.sidebar.markdown("---")
 
-# clear history button with confirmation
-if st.sidebar.button("Clear History", use_container_width=True):
-    st.session_state.show_clear_confirmation = True
-
-# show confirmation dialog if triggered
-if st.session_state.show_clear_confirmation:
-    st.sidebar.markdown('<div class="warning-box">', unsafe_allow_html=True)
-    st.sidebar.warning("⚠️ Are you sure you want to clear all chat history? This action cannot be undone.")
-    
-    col1, col2 = st.sidebar.columns(2)
-    
-    with col1:
-        if st.sidebar.button("Yes, Clear All", type="primary", use_container_width=True):
-            clear_all_conversations()
-            st.session_state.show_clear_confirmation = False
-            st.success("Chat history cleared!")
-            st.rerun()
-    
-    with col2:
-        if st.sidebar.button("Cancel", use_container_width=True):
-            st.session_state.show_clear_confirmation = False
-            st.rerun()
-    
-    st.sidebar.markdown('</div>', unsafe_allow_html=True)
-
 # main content area
-st.title(PROJECT_TITLE)
+st.title("Paladins of Pi")
 
 # display current conversation if one is selected
 if st.session_state.current_conversation is not None:
@@ -217,18 +180,18 @@ if st.button("Send to Dungeon Master"):
         with st.spinner(""):
             try:
                 with st.spinner("Awaiting the Dungeon Master's response..."):
-                    response = requests.get(BACKEND_URL, params={"q": prompt_input})
+                    response = requests.get("http://localhost:8501/generate", params={"q": prompt_input})
                     if response.status_code == 200:
                         data = response.json()
                         ai_response = data["ai_text"]
                         
-                        # save conversation to JSON file
+                        # Save conversation to JSON file
                         add_conversation(prompt_input, ai_response)
                         
-                        # display response
+                        # Display response
                         st.text_area("Response:", value=ai_response, height=200)
                         
-                        # Rrfresh to update sidebar
+                        # Refresh to update sidebar
                         st.rerun()
                     else:
                         st.error(f"Error: {response.status_code}")    
@@ -238,3 +201,8 @@ if st.button("Send to Dungeon Master"):
                 st.error(f"An error occurred: {str(e)}")
     else:
         st.warning("Please enter a prompt first!")
+
+# clear history button
+if st.sidebar.button("Clear History", use_container_width=True):
+    clear_all_conversations()
+    st.rerun()
