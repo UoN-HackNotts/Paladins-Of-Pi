@@ -26,7 +26,7 @@ def generate(): # handler for HTTP GET/generate
     llm_json = llm_resp.json() # gets raw json file of llm's output
 
     ai_text = llm_json.get("response") or llm_json.get("generated") or llm_json.get("text") or "" # tries combinations to extracting json from inpt
-    story(ai_text)
+    story(ai_text, False)
 
     return jsonify({
         "input": user_text,
