@@ -27,22 +27,20 @@ st.title("Paladins of Pi")
 
 # text subheaders above input box
 st.subheader("Prompt Input")
-st.write("**Using:**")
 
 prompt_input = st.text_area(
-    "Enter prompt:",
-    placeholder="Type your prompt here...",
+    placeholder="Ask thou question...",
     height=150,
     key="prompt_input",
-    help="This prompt will be sent to your custom backend script"
+    help="This prompt will be sent to the Dungeon Master."
 )
 
 # button to send to ollama
 if st.button("Send to Dungeon Master"):
     if prompt_input.strip():
-        with st.spinner("Processing your prompt..."):
+        with st.spinner(""):
             try:
-                with st.spinner("Processing your Request..."):
+                with st.spinner("Awaiting the Dungeon Master's response..."):
                     response = requests.get("http://localhost:8501/generate", params={"q": prompt_input})
                     if response.status_code == 200:
                         data = response.json()
