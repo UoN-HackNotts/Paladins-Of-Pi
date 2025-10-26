@@ -8,6 +8,7 @@ import os
 # constants
 JSON_FILE = "data.json" # file path
 BACKGROUND_COLOUR = "#040417"  # background colour #040417 is dark blueish
+BACKEND_URL = "http://localhost:8501/generate"
 PROJECT_TITLE = "Paladins of Pi"
 
 # initialise session state for confirmation dialog
@@ -216,7 +217,7 @@ if st.button("Send to Dungeon Master"):
         with st.spinner(""):
             try:
                 with st.spinner("Awaiting the Dungeon Master's response..."):
-                    response = requests.get("http://localhost:8501/generate", params={"q": prompt_input})
+                    response = requests.get(BACKEND_URL, params={"q": prompt_input})
                     if response.status_code == 200:
                         data = response.json()
                         ai_response = data["ai_text"]
