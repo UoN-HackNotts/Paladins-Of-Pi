@@ -46,6 +46,16 @@ if st.button("Send to Dungeon Master"):
     else:
         st.warning("Please enter a prompt first!")
 
+
+option = st.selectbox(
+    "Select a previous prompt:",
+    ("Prompt 1", "Prompt 2", "Prompt 3"),
+    help="Select a prompt from your history",
+    index = None,
+    placeholder = "Select Contact method",
+)
+
+
 # # colours, backgrounds - probably wont use
 # background_colour = "959595" # background colour
 # st.markdown(f"""
@@ -55,3 +65,4 @@ if st.button("Send to Dungeon Master"):
 #     }}
 # </style>
 # """, unsafe_allow_html=True)
+
