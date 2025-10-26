@@ -8,7 +8,7 @@ def story(user_input, stat):
     try:
         with open("data.json", "r") as file:
             data = json.load(file)
-    except FileNotFoundError:
+    except Exception:
         data = []
 
     data.append(entry)
