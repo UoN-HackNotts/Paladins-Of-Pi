@@ -13,10 +13,6 @@ british english spelling
 ## GET REQUEST (FROM WEBSITE)
 LLM_URL = "http://localhost:11434/api/generate" # ollama
 LLM_TIMEOUT = 40
-SYSTEM_PROMPT = """You are a medieval text adventure engine.
-Write short vivid scenes under 100 words when responding to player inputs, such as: {user_input}
-Use British English spelling only.
-"""
 
 initial_prompt = True
 
@@ -25,10 +21,12 @@ def generate(): # handler for HTTP GET/generate
     """
     Takes in the input from the website using flask request (NOT requests)
     """
+    global initial_prompt
     user_text = (request.args.get("q") or "").strip() # .strip() removes redundant chars, "" is a fallback if "q" not found
-    llm_input = SYSTEM_PROMPT.format(user_input=user_text)
-    story(user_text, True)
-
+    try:
+        story(user_text, True) # quarantining this code
+    except Exception as e:
+        print(f"YY's code is cooked because of {e}")
     """
     LLM output
     """
@@ -42,7 +40,10 @@ def generate(): # handler for HTTP GET/generate
     llm_json = llm_resp.json() # gets raw json file of llm's output
 
     ai_text = llm_json.get("response") or llm_json.get("generated") or llm_json.get("text") or "" # tries combinations to extracting json from inpt
-    story(ai_text, False)
+    try:
+        story(ai_text, False) # quarantining this code
+    except Exception as e:
+        print(f"YY's code is cooked because of {e}")
 
     return jsonify({
         "input": user_text,
