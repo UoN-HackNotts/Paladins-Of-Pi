@@ -5,6 +5,11 @@ import requests
 import json
 import os
 
+# constants
+JSON_FILE = "data.json" # file path
+BACKGROUND_COLOUR = "#040417"  # background colour #040417 is dark blueish
+PROJECT_TITLE = "Paladins of Pi"
+
 # initialise session state for confirmation dialog
 if 'show_clear_confirmation' not in st.session_state:
     st.session_state.show_clear_confirmation = False
@@ -14,10 +19,6 @@ if 'conversations' not in st.session_state:
     st.session_state.conversations = []
 if 'current_conversation' not in st.session_state:
     st.session_state.current_conversation = None
-
-# JSON file path
-JSON_FILE = "data.json"
-PROJECT_TITLE = "Paladins of Pi"
 
 def load_conversations():
     """Load conversations from JSON file"""
@@ -95,8 +96,6 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="expanded"
 )
-
-BACKGROUND_COLOUR = "#040417"  # background colour #040417 is dark blueish
 
 st.markdown(f"""
 <style>
